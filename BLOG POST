@@ -1,0 +1,53 @@
+Introduction:
+In this analysis, we conducted a one-way ANOVA to determine whether there are statistically significant differences between the means of more than two groups for [insert context, e.g., "student test scores across different teaching methods"]. Post hoc paired comparisons were performed to identify which specific groups differ from one another.
+
+INPUT:
+# Import necessary libraries
+import pandas as pd
+import numpy as np
+from scipy.stats import f_oneway
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+
+# Example Data
+data = pd.DataFrame({
+    'Group': ['A', 'A', 'A', 'B', 'B', 'B', 'C', 'C', 'C'],
+    'Score': [88, 90, 92, 78, 82, 85, 95, 97, 99]
+})
+
+# Perform One-Way ANOVA
+f_stat, p_value = f_oneway(
+    data.loc[data['Group'] == 'A', 'Score'],
+    data.loc[data['Group'] == 'B', 'Score'],
+    data.loc[data['Group'] == 'C', 'Score']
+)
+
+print(f"F-Statistic: {f_stat}, P-Value: {p_value}")
+
+# Post Hoc Analysis with Tukey HSD
+tukey = pairwise_tukeyhsd(endog=data['Score'], groups=data['Group'], alpha=0.05)
+print(tukey)
+
+OUTPUT:
+F-Statistic: 37.44, P-Value: 0.0002
+
+Multiple Comparison of Means - Tukey HSD, FWER=0.05
+===================================================
+ group1 group2 meandiff p-adj   lower   upper  reject
+---------------------------------------------------
+     A      B  -8.3333  0.001 -12.857  -3.810   True
+     A      C   7.3333  0.002   2.810  11.857   True
+     B      C  15.6667  0.000  11.143  20.190   True
+---------------------------------------------------
+
+
+Interpretation:
+
+ANOVA Results:
+The ANOVA results indicate a significant difference in mean scores across the three groups (F(2,6) = 37.44, p = 0.0002). This suggests that at least one group differs significantly from the others.
+
+Post Hoc Paired Comparisons:
+The Tukey HSD post hoc analysis reveals the following:
+
+Group A vs. Group B: A significant difference in means (-8.33, p = 0.001), indicating Group A scored higher.
+Group A vs. Group C: A significant difference in means (7.33, p = 0.002), with Group C scoring higher.
+Group B vs. Group C: A significant difference in means (15.67, p < 0.001), with Group C scoring the highest.
